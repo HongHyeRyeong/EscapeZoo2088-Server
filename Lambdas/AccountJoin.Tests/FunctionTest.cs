@@ -16,11 +16,12 @@ namespace AccountJoin.Tests
 
             var req = new ReqAccountJoin
             {
-                Name = "GoGo7",
+                userId = "ksh",
+                password = "chqhaks123"
             };
             webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             var responseBytes
-                = webClient.UploadString(new Uri("https://nq4m28r2tf.execute-api.ap-northeast-2.amazonaws.com/test/") + "AccountJoin", "POST"
+                = webClient.UploadString(new Uri("https://opupgoihqd.execute-api.ap-northeast-2.amazonaws.com/test/") + "AccountJoin", "POST"
                 , JsonConvert.SerializeObject(req));
 
             var res = JsonConvert.DeserializeObject<ResAccountJoin>(responseBytes);

@@ -4,6 +4,7 @@
     {
         public ResponseType ResponseType;
 
-        public int UserId;
+        public string userId;
+        public string password;
     }
 }

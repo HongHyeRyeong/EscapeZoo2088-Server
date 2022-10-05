@@ -226,7 +226,7 @@ namespace BattleServer.Game
             var sqsConfig = new AmazonSQSConfig();
             sqsConfig.ServiceURL = "https://sqs.ap-northeast-2.amazonaws.com/746460013620/mzc-game-sqs";
             sqsConfig.RegionEndpoint = RegionEndpoint.APNortheast2;
-            var credential = new BasicAWSCredentials("AKIA23TD34Q2IAWNXRGR", "FvZJH0iPZ6Mfb+tQd4dL7d3rLA7Y92bLQGBsVk9e");
+            var credential = new BasicAWSCredentials("XX", "xxx");
             var sqsClient = new AmazonSQSClient(credential, sqsConfig);
 
             SQSClientSendMessage(sqsClient, PlayerType.Player1, winPlayer);

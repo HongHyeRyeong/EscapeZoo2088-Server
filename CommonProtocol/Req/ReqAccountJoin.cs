@@ -2,6 +2,7 @@
 {
     public class ReqAccountJoin : CBaseProtocol
     {
-        public string Name;
+        public string userId;
+        public string password;
     }
 }
