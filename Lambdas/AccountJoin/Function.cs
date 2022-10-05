@@ -22,7 +22,7 @@ namespace AccountJoin
             using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
-                query.Append("SELECT userId FROM users'")
+                query.Append("SELECT userid FROM users where userid = '")
                     .Append(req.userId).Append("';");
 
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))

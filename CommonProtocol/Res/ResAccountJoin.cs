@@ -5,6 +5,5 @@
         public ResponseType ResponseType;
 
         public string userId;
-        public string password;
     }
 }

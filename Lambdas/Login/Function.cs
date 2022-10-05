@@ -21,14 +21,14 @@ namespace Login
             using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
-                query.Append("SELECT userId FROM users WHERE nickname ='")
-                    .Append(req.Name).Append("';");
+                query.Append("SELECT userid FROM users WHERE userid ='")
+                    .Append(req.userId).Append("' and password = '").Append(req.password).Append("';");
 
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                 {
                     if (cursor.Read())
                     {
-                        res.UserId = (int)cursor["userId"];
+                        res.userId = cursor["userId"].ToString();
                         return res;
                     }
 
