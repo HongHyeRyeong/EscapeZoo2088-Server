@@ -4,5 +4,6 @@
     {
         public string userId;
         public string password;
+        public string mbti;
     }
 }

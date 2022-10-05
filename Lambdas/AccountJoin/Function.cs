@@ -36,7 +36,7 @@ namespace AccountJoin
 
                 query.Clear();
                 query.Append("INSERT INTO users (userid, password,mbti, win, loss, score) VALUES ('")
-                    .Append(req.userId).Append("','").Append(req.password).Append("', '', 0, 0, 1000);");
+                    .Append(req.userId).Append("','").Append(req.password).Append("','").Append(req.mbti).Append("',0, 0, 1000);");
                 await db.ExecuteNonQueryAsync(query.ToString());
                 res.userId = db.LastInsertedId().ToString();
             }
