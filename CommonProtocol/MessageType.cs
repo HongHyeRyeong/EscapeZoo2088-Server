@@ -15,6 +15,7 @@ namespace CommonProtocol
         EnterRoom,
         TryMatching,
         TryMatchingCancel,
-        GetMatchingStatus
+        GetMatchingStatus,
+        MyPage
     }
 }
