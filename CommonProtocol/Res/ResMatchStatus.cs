@@ -12,5 +12,7 @@
 
         public string TeamName;
 
+        public string GameSessionArn;
+
     }
 }

@@ -36,12 +36,14 @@ namespace MatchStatus
                 string ipaddr = ticketInfo.GameSessionConnectionInfo.IpAddress;
                 int Port = ticketInfo.GameSessionConnectionInfo.Port;
                 string TeamName = ticketInfo.Players[0].Team;
+                string GameSessionArn = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
                 foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
                 {
                     res.IpAddress = ipaddr;
                     res.PlayerSessionId = psess.PlayerSessionId;
                     res.Port = Port;
                     res.TeamName = TeamName;
+                    res.GameSessionArn = GameSessionArn;
                     break;
                 }
             }
