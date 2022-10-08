@@ -11,7 +11,7 @@ using System.Net;
 using CommonProtocol;
 using Newtonsoft.Json;
 
-namespace myPage.Tests
+namespace MatchStatus.Tests
 {
     public class FunctionTest
     {
@@ -31,7 +31,7 @@ namespace myPage.Tests
                 , JsonConvert.SerializeObject(req));
 
             var res = JsonConvert.DeserializeObject<ResMatchStatus>(responseBytes);
-            Assert.True(res.ResponseType == ResponseType.Success || res.ResponseType == ResponseType.DuplicateName);
+            Assert.True(res.ResponseType == ResponseType.Proceeding || res.ResponseType == ResponseType.DuplicateName);
         }
     }
 }

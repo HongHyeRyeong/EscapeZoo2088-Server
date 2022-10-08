@@ -4,6 +4,7 @@
     {
         Fail = 0,
         Success,
-        DuplicateName
+        DuplicateName,
+        Proceeding
     }
 }

@@ -5,5 +5,6 @@
         public string userId;
         public int gameMap;
         public int score;
+        public int character;
     }
 }
