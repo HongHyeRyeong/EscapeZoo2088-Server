@@ -30,6 +30,7 @@ namespace AccountJoin
                     if (cursor.Read())
                     {
                         res.ResponseType = ResponseType.DuplicateName;
+                        res.userId = cursor["userId"].ToString();
                         return res;
                     }
                 }

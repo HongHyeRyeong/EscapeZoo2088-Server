@@ -17,7 +17,8 @@ namespace AccountJoin.Tests
             var req = new ReqAccountJoin
             {
                 userId = "ksh",
-                password = "chqhaks123"
+                password = "chqhaks123",
+                mbti = "inft"
             };
             webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             var responseBytes

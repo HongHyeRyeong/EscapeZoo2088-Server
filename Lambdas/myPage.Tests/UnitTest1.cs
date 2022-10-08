@@ -7,32 +7,30 @@ using Xunit;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.TestUtilities;
 
-using Login;
 using System.Net;
 using CommonProtocol;
 using Newtonsoft.Json;
 
-namespace Login.Tests
+namespace myPage.Tests
 {
     public class FunctionTest
     {
         [Fact]
-        public void TestToLogin()
+        public void TestTomyPage()
         {
 
             var webClient = new WebClient();
 
-            var req = new ReqAccountJoin
+            var req = new ReqMyPage
             {
-                userId = "value2",
-                password = "value1"
+                userId = "ksh"
             };
             webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
             var responseBytes
-                = webClient.UploadString(new Uri("https://opupgoihqd.execute-api.ap-northeast-2.amazonaws.com/test/") + "Login", "POST"
+                = webClient.UploadString(new Uri("https://opupgoihqd.execute-api.ap-northeast-2.amazonaws.com/test/") + "myPage", "POST"
                 , JsonConvert.SerializeObject(req));
 
-            var res = JsonConvert.DeserializeObject<ResAccountJoin>(responseBytes);
+            var res = JsonConvert.DeserializeObject<ResMyPage>(responseBytes);
             Assert.True(res.ResponseType == ResponseType.Success || res.ResponseType == ResponseType.DuplicateName);
         }
     }
