@@ -42,6 +42,18 @@ namespace GameLiftWrapper
             }
             else
             {
+                Boolean isAnotherTeam = false;
+                MatchInfo anotherTeam = null;
+                foreach (KeyValuePair<MatchInfo, GameData> keyValuePair in dict)
+                {
+                    if (!keyValuePair.Key.teamName.Equals(teamName))
+                    {
+                        isAnotherTeam = true;
+                        anotherTeam = new MatchInfo(keyValuePair.Key.gameSessionId, keyValuePair.Key.teamName);
+                        break;
+                    }
+                }
+
                 Dictionary<string, int> userInfo = new Dictionary<string, int>();
                 userInfo[userId] = roundNum;
 
@@ -55,8 +67,16 @@ namespace GameLiftWrapper
 
                 long sunriseTime = randomObj.Next(10, 25);
 
-                GameData value = new GameData(userInfo, shuffleList, sunriseTime);
-                dict.Add(key, value);
+                if (isAnotherTeam)
+                {
+                    GameData value = dict[anotherTeam];
+                    dict.Add(key, value);
+                }
+                else
+                {
+                    GameData value = new GameData(userInfo, shuffleList, sunriseTime);
+                    dict.Add(key, value);
+                }
             }
             return true;
         }
