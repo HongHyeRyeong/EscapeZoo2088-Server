@@ -54,26 +54,28 @@ namespace GameLiftWrapper
                     }
                 }
 
-                Dictionary<string, int> userInfo = new Dictionary<string, int>();
-                userInfo[userId] = roundNum;
-
-                Random randomObj = new Random();
-                List<int> roundList = new List<int>();
-                for (int i = 0; i < 7; i++)
-                {
-                    roundList.Add(i);
-                }
-                List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
-
-                long sunriseTime = randomObj.Next(10, 25);
-
                 if (isAnotherTeam)
                 {
                     GameData value = dict[anotherTeam];
+                    value.userInfo.Clear();
+                    value.userInfo[userId] = roundNum;
                     dict.Add(key, value);
                 }
                 else
                 {
+                    Dictionary<string, int> userInfo = new Dictionary<string, int>();
+                    userInfo[userId] = roundNum;
+
+                    Random randomObj = new Random();
+                    List<int> roundList = new List<int>();
+                    for (int i = 0; i < 7; i++)
+                    {
+                        roundList.Add(i);
+                    }
+                    List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
+
+                    long sunriseTime = randomObj.Next(10, 25);
+
                     GameData value = new GameData(userInfo, shuffleList, sunriseTime);
                     dict.Add(key, value);
                 }
