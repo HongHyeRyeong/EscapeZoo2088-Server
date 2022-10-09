@@ -4,11 +4,11 @@ using Amazon.Lambda.Core;
 using CommonProtocol;
 using Amazon.GameLift;
 using Amazon.GameLift.Model;
-using System.Collections.Generic;
+using System;
 
 [assembly: LambdaSerializer(typeof(CustomSerializer.LambdaSerializer))]
 
-namespace MatchRequest
+namespace MatchStatus
 {
     public class Function
     {
@@ -27,26 +27,33 @@ namespace MatchRequest
             });
 
             var ticketInfo = match_response.TicketList[0];
-            string matchTicket = ticketInfo.TicketId;
 
-            if(ticketInfo.Status == "COMPLETED")
+            Console.WriteLine("ticketInfo = " + ticketInfo.TicketId);
+            Console.WriteLine("ticketInfoStatus = " + ticketInfo.Status);
+           // ticketInfo.Players[0].Team;
+            if (ticketInfo.Status == "COMPLETED")
             {
                 string ipaddr = ticketInfo.GameSessionConnectionInfo.IpAddress;
                 int Port = ticketInfo.GameSessionConnectionInfo.Port;
-                foreach(MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
+                string TeamName = ticketInfo.Players[0].Team;
+                string GameSessionArn = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
+                foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
                 {
                     res.IpAddress = ipaddr;
                     res.PlayerSessionId = psess.PlayerSessionId;
                     res.Port = Port;
+                    res.TeamName = TeamName;
+                    res.GameSessionArn = GameSessionArn;
                     break;
                 }
             }
             else
             {
-                res.ResponseType = ResponseType.Fail;
+                res.ResponseType = ResponseType.Proceeding;
             }
 
             return res;
+
         }
     }
 }

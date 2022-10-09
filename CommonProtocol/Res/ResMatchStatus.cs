@@ -10,5 +10,9 @@
 
         public int Port;
 
+        public string TeamName;
+
+        public string GameSessionArn;
+
     }
 }

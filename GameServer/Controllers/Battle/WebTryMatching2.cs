@@ -55,7 +55,7 @@ namespace GameServer.Controllers
                 {
                     if (cursor.Read())
                     {
-                        res.UserId = (int)cursor["userId"];
+                        res.userId = cursor["userId"].ToString();
                         return res;
                     }
 

@@ -24,15 +24,17 @@ namespace MatchRequest
             scoreValue.N = req.score;
             var gameMapValue = new AttributeValue();
             gameMapValue.N = req.gameMap;
+            var characterValue = new AttributeValue();
+            characterValue.N = req.character;
 
             var Dtemp = new Dictionary<string, AttributeValue>();
             Dtemp.Add("score", scoreValue);
             Dtemp.Add("gameMap", gameMapValue);
-
+            Dtemp.Add("character", characterValue);
 
             var match_response = await client.StartMatchmakingAsync(new StartMatchmakingRequest
             {
-                ConfigurationName = "escapeZooMatchConfig",
+                ConfigurationName = "Test3",
                 Players = new List<Player>
                 {
                     new Player

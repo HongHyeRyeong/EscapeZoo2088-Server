@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 
 using Xunit;
-using Amazon.Lambda.Core;
-using Amazon.Lambda.TestUtilities;
 
 using System.Net;
 using CommonProtocol;
 using Newtonsoft.Json;
 
-namespace myPage.Tests
+namespace MatchRequest.Tests
 {
     public class FunctionTest
     {
@@ -32,7 +28,23 @@ namespace myPage.Tests
                 , JsonConvert.SerializeObject(req));
 
             var res = JsonConvert.DeserializeObject<ResMatchRequest>(responseBytes);
-            Assert.True(res.ResponseType == ResponseType.Success || res.ResponseType == ResponseType.DuplicateName);
+
+            if(res.ResponseType == ResponseType.Success || res.ResponseType == ResponseType.DuplicateName)
+            {
+                Thread.Sleep(1000);
+                var reqSt = new ReqMatchStatus
+                {
+                    ticketIds = { res.ticketId }
+                };
+                webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+                var responseBytesSt
+                    = webClient.UploadString(new Uri("https://opupgoihqd.execute-api.ap-northeast-2.amazonaws.com/test/") + "MatchStatus", "POST"
+                    , JsonConvert.SerializeObject(reqSt));
+
+                var resSt = JsonConvert.DeserializeObject<ResMatchStatus>(responseBytesSt);
+                Console.WriteLine(resSt);
+                Assert.True(resSt.ResponseType == ResponseType.Proceeding || resSt.ResponseType == ResponseType.DuplicateName);
+            }
         }
     }
 }

@@ -16,6 +16,8 @@ namespace CommonProtocol
         TryMatching,
         TryMatchingCancel,
         GetMatchingStatus,
-        MyPage
+        MyPage,
+        MatchRequest,
+        MatchStatus
     }
 }
