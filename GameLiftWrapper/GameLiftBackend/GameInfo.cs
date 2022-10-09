@@ -2,14 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GameLiftServer
+namespace GameLiftWrapper
 {
     public class GameInfo
     {
+        private static GameInfo staticGameInfo;
+
+        public static GameInfo Instance()
+        {
+            if (staticGameInfo == null)
+            {
+                staticGameInfo = new GameInfo();
+            }
+            return staticGameInfo;
+        }
+
         Dictionary<MatchInfo, GameData> dict = new Dictionary<MatchInfo, GameData>();
 
-        public void addUser(string gameSessionId, string teamName, string userId, int roundNum)
+        public Boolean addUser(string gameSessionId, string teamName, string userId, int roundNum)
         {
+            if (gameSessionId == null || teamName == null || userId == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals("") || userId.Equals(""))
+            {
+                return false;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {
@@ -40,10 +60,20 @@ namespace GameLiftServer
                 GameData value = new GameData(userInfo, shuffleList, sunriseTime);
                 dict.Add(key, value);
             }
+            return true;
         }
 
         public Boolean removeGame(string gameSessionId, string teamName)
         {
+            if (gameSessionId == null || teamName == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return false;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {
@@ -55,6 +85,15 @@ namespace GameLiftServer
 
         public Boolean isExistUser(string gameSessionId, string teamName, string userId)
         {
+            if (gameSessionId == null || teamName == null || userId == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals("") || userId.Equals(""))
+            {
+                return false;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {
@@ -69,6 +108,15 @@ namespace GameLiftServer
 
         public int removeUser(string gameSessionId, string teamName, string userId)
         {
+            if (gameSessionId == null || teamName == null || userId == null)
+            {
+                return 0;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals("") || userId.Equals(""))
+            {
+                return 0;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {
@@ -84,6 +132,15 @@ namespace GameLiftServer
 
         public int getUserCount(string gameSessionId, string teamName)
         {
+            if (gameSessionId == null || teamName == null)
+            {
+                return 0;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return 0;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {
@@ -95,6 +152,15 @@ namespace GameLiftServer
 
         public int getUserCountInRound(string gameSessionId, string teamName, int roundNum)
         {
+            if (gameSessionId == null || teamName == null)
+            {
+                return 0;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return 0;
+            }
+
             MatchInfo key = new MatchInfo(gameSessionId, teamName);
             if (dict.ContainsKey(key))
             {

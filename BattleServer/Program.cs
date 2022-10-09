@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aws.GameLift.Server;
 using BattleServer.GameLift;
+using GameLiftWrapper;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 
@@ -46,6 +47,7 @@ namespace BattleServer
                 Console.WriteLine("Battle Server Setup Fail...");
             }
 
+            var gameInfo = GameInfo.Instance();
             Console.WriteLine("Battle Server Start...");
             Server.BattleServer.Instance.Start();
             
