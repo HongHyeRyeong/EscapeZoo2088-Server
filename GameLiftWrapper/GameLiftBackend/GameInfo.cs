@@ -148,6 +148,29 @@ namespace GameLiftWrapper
             return 0;
         }
 
+        public int getUserCountInGame(string gameSessionId)
+        {
+            if (gameSessionId == null)
+            {
+                return 0;
+            }
+            if (gameSessionId.Equals(""))
+            {
+                return 0;
+            }
+
+            int userCount = 0;
+            foreach (KeyValuePair<MatchInfo, GameData> keyValuePair in dict)
+            {
+                if (keyValuePair.Key.gameSessionId.Equals(gameSessionId))
+                {
+                    GameData value = dict[keyValuePair.Key];
+                    userCount += value.userInfo.Count;
+                }
+            }
+            return userCount;
+        }
+
         public int getUserCountInRound(string gameSessionId, string teamName, int roundNum)
         {
             if (gameSessionId == null || teamName == null)
@@ -207,6 +230,47 @@ namespace GameLiftWrapper
                 return userList;
             }
             return null;
+        }
+
+        public Boolean setSunriseTime(string gameSessionId, string teamName, long newSunriseTime)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return false;
+            }
+
+            MatchInfo key = new MatchInfo(gameSessionId, teamName);
+            if (dict.ContainsKey(key))
+            {
+                GameData value = dict[key];
+                value.sunriseTime = newSunriseTime;
+                dict[key] = value;
+            }
+            return true;
+        }
+
+        public long getSunriseTime(string gameSessionId, string teamName, long newSunriseTime)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return 0;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return 0;
+            }
+
+            MatchInfo key = new MatchInfo(gameSessionId, teamName);
+            if (dict.ContainsKey(key))
+            {
+                GameData value = dict[key];
+                return value.sunriseTime;
+            }
+            return 0;
         }
     }
 
