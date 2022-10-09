@@ -53,9 +53,7 @@ namespace GameLiftWrapper
                 }
                 List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
 
-                long randomTime = randomObj.Next(10, 15);
-                var timeSpan = (DateTime.UtcNow.AddSeconds(randomTime) - new DateTime(1970, 1, 1, 0, 0, 0));
-                long sunriseTime = (long)timeSpan.TotalSeconds;
+                long sunriseTime = randomObj.Next(10, 25);
 
                 GameData value = new GameData(userInfo, shuffleList, sunriseTime);
                 dict.Add(key, value);
@@ -176,6 +174,39 @@ namespace GameLiftWrapper
                 return checkCount;
             }
             return 0;
+        }
+
+        public List<string> getUserListInTeam(string gameSessionId, string teamName, int roundNum)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return null;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return null;
+            }
+
+            MatchInfo key = new MatchInfo(gameSessionId, teamName);
+            if (dict.ContainsKey(key))
+            {
+                GameData value = dict[key];
+                if (value.userInfo.Count == 0)
+                {
+                    return null;
+                }
+
+                List<string> userList = new List<string>();
+                foreach (KeyValuePair<string, int> keyValuePair in value.userInfo)
+                {
+                    if (keyValuePair.Value == roundNum)
+                    {
+                        userList.Add(keyValuePair.Key);
+                    }
+                }
+                return userList;
+            }
+            return null;
         }
     }
 
