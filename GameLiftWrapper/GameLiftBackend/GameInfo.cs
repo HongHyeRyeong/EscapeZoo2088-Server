@@ -253,7 +253,7 @@ namespace GameLiftWrapper
             return true;
         }
 
-        public long getSunriseTime(string gameSessionId, string teamName, long newSunriseTime)
+        public long getSunriseTime(string gameSessionId, string teamName)
         {
             if (gameSessionId == null || teamName == null)
             {
@@ -271,6 +271,30 @@ namespace GameLiftWrapper
                 return value.sunriseTime;
             }
             return 0;
+        }
+
+        public List<int> getRoundList(string gameSessionId, string teamName)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return null;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return null;
+            }
+
+            MatchInfo key = new MatchInfo(gameSessionId, teamName);
+            if (dict.ContainsKey(key))
+            {
+                GameData value = dict[key];
+                List<int> resultRoundList = new List<int>();
+                foreach (int roundNum in value.roundList) {
+                    resultRoundList.Add(roundNum);
+                }
+                return resultRoundList;
+            }
+            return null;
         }
     }
 
