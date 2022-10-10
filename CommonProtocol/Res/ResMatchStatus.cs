@@ -1,4 +1,7 @@
-﻿namespace CommonProtocol
+﻿using System.Collections.Generic;
+
+
+namespace CommonProtocol
 {
     public class ResMatchStatus : CBaseProtocol
     {
@@ -12,7 +15,9 @@
 
         public string TeamName;
 
-        public string GameSessionArn;
+        public string Gamesessionid;
+
+        public List<int> roundList;
 
     }
 }

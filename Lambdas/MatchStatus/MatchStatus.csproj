@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\CommonProtocol\CommonProtocol.csproj" />
     <ProjectReference Include="..\..\DBConnector\DBConnector.csproj" />
     <ProjectReference Include="..\..\LambdaSerializer\LambdaSerializer.csproj" />
+	<ProjectReference Include="..\..\GameLiftWrapper\GameLiftBackend\GameLiftBackend.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,10 +1,11 @@
-using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using CommonProtocol;
 using Amazon.GameLift;
 using Amazon.GameLift.Model;
+using GameLiftWrapper;
 using System;
+
 
 [assembly: LambdaSerializer(typeof(CustomSerializer.LambdaSerializer))]
 
@@ -14,12 +15,17 @@ namespace MatchStatus
     {
         public async Task<ResMatchStatus> FunctionHandler(ReqMatchStatus req, ILambdaContext context)
         {
+
+
             var res = new ResMatchStatus
             {
                 ResponseType = ResponseType.Success
             };
 
             var client = new AmazonGameLiftClient();
+            var clientInfo = GameInfo.Instance();
+
+
 
             var match_response = await client.DescribeMatchmakingAsync(new DescribeMatchmakingRequest
             {
@@ -28,22 +34,28 @@ namespace MatchStatus
 
             var ticketInfo = match_response.TicketList[0];
 
-            Console.WriteLine("ticketInfo = " + ticketInfo.TicketId);
-            Console.WriteLine("ticketInfoStatus = " + ticketInfo.Status);
-           // ticketInfo.Players[0].Team;
             if (ticketInfo.Status == "COMPLETED")
             {
                 string ipaddr = ticketInfo.GameSessionConnectionInfo.IpAddress;
                 int Port = ticketInfo.GameSessionConnectionInfo.Port;
                 string TeamName = ticketInfo.Players[0].Team;
-                string GameSessionArn = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
+                string Gamesessionid = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
+                
+
                 foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
                 {
                     res.IpAddress = ipaddr;
                     res.PlayerSessionId = psess.PlayerSessionId;
-                    res.Port = Port;
+                    if (TeamName == "blue")
+                        res.Port = Port;
+                    else
+                        res.Port = Port + 1;
                     res.TeamName = TeamName;
-                    res.GameSessionArn = GameSessionArn;
+                    res.Gamesessionid = Gamesessionid;
+
+                    //gameInfo¿¡ °ª ³Ö¾îÁÜ
+                    clientInfo.addUser(Gamesessionid, TeamName, req.userId,req.mbti,req.character, -1);
+                    res.roundList = clientInfo.getRoundList(Gamesessionid, TeamName);
                     break;
                 }
             }
