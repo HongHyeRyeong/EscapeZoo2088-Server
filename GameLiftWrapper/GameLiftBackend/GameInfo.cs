@@ -46,7 +46,7 @@ namespace GameLiftWrapper
                 MatchInfo anotherTeam = null;
                 foreach (KeyValuePair<MatchInfo, GameData> keyValuePair in dict)
                 {
-                    if (!keyValuePair.Key.teamName.Equals(teamName))
+                    if (keyValuePair.Key.gameSessionId.Equals(gameSessionId) && !keyValuePair.Key.teamName.Equals(teamName))
                     {
                         isAnotherTeam = true;
                         anotherTeam = new MatchInfo(keyValuePair.Key.gameSessionId, keyValuePair.Key.teamName);
@@ -72,11 +72,20 @@ namespace GameLiftWrapper
                     {
                         roundList.Add(i);
                     }
-                    List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
+                    //List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
+                    int random1, temp;
+                    for (int i = 0; i < roundList.Count - 1; ++i)
+                    {
+                        random1 = randomObj.Next(i+1, roundList.Count-1);
+
+                        temp = roundList[i];
+                        roundList[i] = roundList[random1];
+                        roundList[random1] = temp;
+                    }
 
                     long sunriseTime = randomObj.Next(10, 25);
 
-                    GameData value = new GameData(userInfo, shuffleList, sunriseTime);
+                    GameData value = new GameData(userInfo, roundList, sunriseTime);
                     dict.Add(key, value);
                 }
             }
