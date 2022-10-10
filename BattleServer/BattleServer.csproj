@@ -165,6 +165,10 @@
       <Project>{55d885ae-6d17-4c23-b5fe-aad7155c025a}</Project>
       <Name>CommonType</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GameLiftWrapper\GameLiftBackend\GameLiftBackend.csproj">
+      <Project>{68D266BF-0197-4217-BAC9-6F981155FEAC}</Project>
+      <Name>GameLiftBackend</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.SQS.3.5.1.14\analyzers\dotnet\cs\AWSSDK.SQS.CodeAnalysis.dll" />
