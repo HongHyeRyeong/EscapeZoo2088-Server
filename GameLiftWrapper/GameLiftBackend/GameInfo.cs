@@ -66,7 +66,7 @@ namespace GameLiftWrapper
 
                     long sunriseTime = anotherTeamValue.sunriseTime;
 
-                    GameData value = new GameData(userInfo, roundList, sunriseTime);
+                    GameData value = new GameData(userInfo, roundList, sunriseTime, false);
                     dict.Add(key, value);
                 }
                 else
@@ -93,7 +93,7 @@ namespace GameLiftWrapper
 
                     long sunriseTime = randomObj.Next(10, 25);
 
-                    GameData value = new GameData(userInfo, roundList, sunriseTime);
+                    GameData value = new GameData(userInfo, roundList, sunriseTime, false);
                     dict.Add(key, value);
                 }
             }
@@ -330,6 +330,45 @@ namespace GameLiftWrapper
             return enemyRoundInfo;
         }
 
+        public bool isWinner(string gameSessionId, string teamName)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return false;
+            }
+
+            string winnerGameSessionId = "";
+            string winnerTeamName = "";
+            foreach (KeyValuePair<MatchInfo, GameData> keyValuePair in dict)
+            {
+                string keyGameSessionId = keyValuePair.Key.gameSessionId;
+                string keyTeamName = keyValuePair.Key.teamName;
+                GameData gameData = keyValuePair.Value;
+                if (gameData.isWinner)
+                {
+                    winnerGameSessionId = keyGameSessionId;
+                    winnerTeamName = keyTeamName;
+                }
+            }
+
+            if (winnerTeamName.Equals(""))
+            {
+                MatchInfo key = new MatchInfo(gameSessionId, teamName);
+                dict[key].isWinner = true;
+                return true;
+            }
+            else
+            {
+                MatchInfo key = new MatchInfo(gameSessionId, teamName);
+                dict[key].isWinner = false;
+                return false;
+            }
+        }
+
         public Boolean setSunriseTime(string gameSessionId, string teamName, long newSunriseTime)
         {
             if (gameSessionId == null || teamName == null)
@@ -413,8 +452,9 @@ namespace GameLiftWrapper
         public Dictionary<string, UserData> userInfo = new Dictionary<string, UserData>();
         public List<int> roundList = new List<int>();
         public long sunriseTime = 0;
+        public bool isWinner = false;
 
-        public GameData(Dictionary<string, UserData> userInfo, List<int> roundList, long sunriseTime)
+        public GameData(Dictionary<string, UserData> userInfo, List<int> roundList, long sunriseTime, bool isWinner)
         {
             foreach (KeyValuePair<string, UserData> keyValuePair in userInfo)
             {
@@ -426,6 +466,7 @@ namespace GameLiftWrapper
                 this.roundList.Add(roundNum);
             }
             this.sunriseTime = sunriseTime;
+            this.isWinner = isWinner;
         }
     }
 
