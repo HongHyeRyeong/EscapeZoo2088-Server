@@ -1,0 +1,27 @@
+
+{
+    "Information" : [
+        "This file provides default values for the deployment wizard inside Visual Studio and the AWS Lambda commands added to the .NET Core CLI.",
+        "To learn more about the Lambda commands with the .NET Core CLI execute the following command at the command line in the project root directory.",
+        "dotnet lambda help",
+        "All the command line options for the Lambda command can be specified in this file."
+    ],
+    "profile"     : "default",
+    "region"      : "ap-northeast-2",
+    "configuration" : "Release",
+    "framework"     : "netcoreapp3.1",
+    "function-runtime" : "dotnetcore3.1",
+    "function-memory-size" : 256,
+    "function-timeout"     : 10,
+    "function-handler"     : "EnterIngame::EnterIngame.Function::FunctionHandler",
+    "function-name"        : "EnterIngame",
+    "package-type"         : "Zip",
+    "function-role"        : "arn:aws:iam::746460013620:role/mzc-game-lambda-role",
+    "function-subnets"     : "subnet-084abdee1955ad557,subnet-0d405eb15babe41d4",
+    "tracing-mode"         : "PassThrough",
+    "environment-variables" : "\"GAMELIFT_FLEET_ID\"=\"fleet-38314a31-016b-401e-bc6b-6901325b3823\";\"GAME_DB_PORT\"=\"3306\";\"GAME_DB_USER\"=\"admin\";\"GAMELIFT_SERVICE_URL\"=\"\";\"GAME_DB_CHARSET\"=\"utf8\";\"GAME_DB_IP\"=\"mzc-game-rds.cmym7pzc3h6r.ap-northeast-2.rds.amazonaws.com\";\"GAME_DB_DATABASE\"=\"escapezoo\";\"GAME_DB_PASSWORD\"=\"Admin1!!\"",
+    "image-tag"             : "",
+    "function-description"  : "",
+    "function-security-groups" : "sg-0df026e9db142af5e",
+    "function-architecture"    : "x86_64"
+}
