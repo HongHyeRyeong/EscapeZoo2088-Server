@@ -19,7 +19,7 @@ namespace GameLiftWrapper
 
         Dictionary<MatchInfo, GameData> dict = new Dictionary<MatchInfo, GameData>();
 
-        public Boolean addUser(string gameSessionId, string teamName, string userId, int roundNum)
+        public Boolean addUser(string gameSessionId, string teamName, string userId, string mbti, int animal, int roundNum)
         {
             if (gameSessionId == null || teamName == null || userId == null)
             {
@@ -34,11 +34,9 @@ namespace GameLiftWrapper
             if (dict.ContainsKey(key))
             {
                 GameData value = dict[key];
-                if (!value.userInfo.ContainsKey(userId))
-                {
-                    value.userInfo[userId] = roundNum;
-                    dict[key] = value;
-                }
+                UserData userData = new UserData(roundNum, mbti, animal);
+                value.userInfo.Add(userId, userData);
+                dict[key] = value;
             }
             else
             {
@@ -56,15 +54,25 @@ namespace GameLiftWrapper
 
                 if (isAnotherTeam)
                 {
-                    GameData value = dict[anotherTeam];
-                    value.userInfo.Clear();
-                    value.userInfo[userId] = roundNum;
+                    GameData anotherTeamValue = dict[anotherTeam];
+                    Dictionary<string, UserData> userInfo = new Dictionary<string, UserData>();
+                    userInfo[userId] = new UserData(roundNum, mbti, animal);
+
+                    List<int> roundList = new List<int>();
+                    foreach (int num in anotherTeamValue.roundList)
+                    {
+                        roundList.Add(num);
+                    }
+
+                    long sunriseTime = anotherTeamValue.sunriseTime;
+
+                    GameData value = new GameData(userInfo, roundList, sunriseTime);
                     dict.Add(key, value);
                 }
                 else
                 {
-                    Dictionary<string, int> userInfo = new Dictionary<string, int>();
-                    userInfo[userId] = roundNum;
+                    Dictionary<string, UserData> userInfo = new Dictionary<string, UserData>();
+                    userInfo[userId] = new UserData(roundNum, mbti, animal);
 
                     Random randomObj = new Random();
                     List<int> roundList = new List<int>();
@@ -74,9 +82,9 @@ namespace GameLiftWrapper
                     }
                     //List<int> shuffleList = roundList.OrderBy(a => Guid.NewGuid()).ToList();
                     int random1, temp;
-                    for (int i = 0; i < roundList.Count - 1; ++i)
+                    for (int i = 0; i < roundList.Count; ++i)
                     {
-                        random1 = randomObj.Next(i+1, roundList.Count-1);
+                        random1 = randomObj.Next(0, roundList.Count-1);
 
                         temp = roundList[i];
                         roundList[i] = roundList[random1];
@@ -90,6 +98,33 @@ namespace GameLiftWrapper
                 }
             }
             return true;
+        }
+
+        public Boolean updateUser(string gameSessionId, string teamName, string userId, int roundNum)
+        {
+            if (gameSessionId == null || teamName == null || userId == null)
+            {
+                return false;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals("") || userId.Equals(""))
+            {
+                return false;
+            }
+
+            MatchInfo key = new MatchInfo(gameSessionId, teamName);
+            GameData value = dict[key];
+            UserData userData = new UserData(roundNum, value.userInfo[userId].mbti, value.userInfo[userId].animal);
+            value.userInfo.Add(userId, userData);
+            if (dict.ContainsKey(key))
+            {
+                dict[key] = value;
+                return true;
+            }
+            else
+            {
+                dict.Add(key, value);
+                return true;
+            }
         }
 
         public Boolean removeGame(string gameSessionId, string teamName)
@@ -218,9 +253,9 @@ namespace GameLiftWrapper
             {
                 GameData value = dict[key];
                 int checkCount = 0;
-                foreach (KeyValuePair<string, int> keyValuePair in value.userInfo)
+                foreach (KeyValuePair<string, UserData> keyValuePair in value.userInfo)
                 {
-                    if (keyValuePair.Value == roundNum)
+                    if (keyValuePair.Value.roundNum == roundNum)
                     {
                         checkCount++;
                     }
@@ -230,7 +265,7 @@ namespace GameLiftWrapper
             return 0;
         }
 
-        public List<string> getUserListInTeam(string gameSessionId, string teamName, int roundNum)
+        public Dictionary<string, UserData> getUserListInTeam(string gameSessionId, string teamName)
         {
             if (gameSessionId == null || teamName == null)
             {
@@ -250,20 +285,18 @@ namespace GameLiftWrapper
                     return null;
                 }
 
-                List<string> userList = new List<string>();
-                foreach (KeyValuePair<string, int> keyValuePair in value.userInfo)
+                Dictionary<string, UserData> userList = new Dictionary<string, UserData>();
+                foreach (KeyValuePair<string, UserData> keyValuePair in value.userInfo)
                 {
-                    if (keyValuePair.Value == roundNum)
-                    {
-                        userList.Add(keyValuePair.Key);
-                    }
+                    UserData userData = new UserData(keyValuePair.Value.roundNum, keyValuePair.Value.mbti, keyValuePair.Value.animal);
+                    userList.Add(keyValuePair.Key, userData);
                 }
                 return userList;
             }
             return null;
         }
 
-        public Dictionary<string, int> getEnemyRound(string gameSessionId, string teamName, int roundNum)
+        public Dictionary<string, int> getEnemyRound(string gameSessionId, string teamName)
         {
             if (gameSessionId == null || teamName == null)
             {
@@ -283,9 +316,9 @@ namespace GameLiftWrapper
                 {
                     GameData value = dict[keyValuePair.Key];
                     int maxRound = 0;
-                    foreach (KeyValuePair<string, int> keyValue in value.userInfo)
+                    foreach (KeyValuePair<string, UserData> keyValue in value.userInfo)
                     {
-                        int userRound = keyValue.Value;
+                        int userRound = keyValue.Value.roundNum;
                         if (maxRound < userRound)
                         {
                             maxRound = userRound;
@@ -377,21 +410,36 @@ namespace GameLiftWrapper
 
     public class GameData
     {
-        public Dictionary<string, int> userInfo = new Dictionary<string, int>();
+        public Dictionary<string, UserData> userInfo = new Dictionary<string, UserData>();
         public List<int> roundList = new List<int>();
         public long sunriseTime = 0;
 
-        public GameData(Dictionary<string, int> userInfo, List<int> roundList, long sunriseTime)
+        public GameData(Dictionary<string, UserData> userInfo, List<int> roundList, long sunriseTime)
         {
-            foreach (KeyValuePair<string, int> keyValuePair in userInfo)
+            foreach (KeyValuePair<string, UserData> keyValuePair in userInfo)
             {
-                this.userInfo[keyValuePair.Key] = keyValuePair.Value;
+                UserData userData = new UserData(keyValuePair.Value.roundNum, keyValuePair.Value.mbti, keyValuePair.Value.animal);
+                this.userInfo[keyValuePair.Key] = userData;
             }
             foreach (int roundNum in roundList)
             {
                 this.roundList.Add(roundNum);
             }
             this.sunriseTime = sunriseTime;
+        }
+    }
+
+    public class UserData
+    {
+        public int roundNum;
+        public string mbti;
+        public int animal;
+
+        public UserData(int roundNum, string mbti, int animal)
+        {
+            this.roundNum = roundNum;
+            this.mbti = mbti;
+            this.animal = animal;
         }
     }
 }
