@@ -34,7 +34,7 @@ namespace MatchRequest
 
             var match_response = await client.StartMatchmakingAsync(new StartMatchmakingRequest
             {
-                ConfigurationName = "Test3",
+                ConfigurationName = "Test2",
                 Players = new List<Player>
                 {
                     new Player
