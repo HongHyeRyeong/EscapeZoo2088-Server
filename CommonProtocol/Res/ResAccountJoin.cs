@@ -5,5 +5,6 @@
         public ResponseType ResponseType;
 
         public string userId;
+        public int score;
     }
 }

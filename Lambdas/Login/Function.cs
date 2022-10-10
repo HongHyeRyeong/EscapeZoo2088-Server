@@ -21,7 +21,7 @@ namespace Login
             using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
-                query.Append("SELECT userid FROM users WHERE userid ='")
+                query.Append("SELECT userid,score FROM users WHERE userid ='")
                     .Append(req.userId).Append("' and password = '").Append(req.password).Append("';");
 
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
@@ -29,6 +29,7 @@ namespace Login
                     if (cursor.Read())
                     {
                         res.userId = cursor["userId"].ToString();
+                        res.score = (int) cursor["score"];
                         return res;
                     }
 
