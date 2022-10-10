@@ -18,6 +18,8 @@ namespace CommonProtocol
         GetMatchingStatus,
         MyPage,
         MatchRequest,
-        MatchStatus
+        MatchStatus,
+        StartGame,
+        RestartGame
     }
 }

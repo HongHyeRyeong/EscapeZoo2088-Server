@@ -254,6 +254,40 @@ namespace GameLiftWrapper
             return null;
         }
 
+        public Dictionary<string, int> getEnemyRound(string gameSessionId, string teamName, int roundNum)
+        {
+            if (gameSessionId == null || teamName == null)
+            {
+                return null;
+            }
+            if (gameSessionId.Equals("") || teamName.Equals(""))
+            {
+                return null;
+            }
+
+            Dictionary<string, int> enemyRoundInfo = new Dictionary<string, int>();
+            foreach (KeyValuePair<MatchInfo, GameData> keyValuePair in dict)
+            {
+                string keyGameSessionId = keyValuePair.Key.gameSessionId;
+                string keyTeamName = keyValuePair.Key.teamName;
+                if (keyGameSessionId.Equals(gameSessionId) && !keyTeamName.Equals(teamName))
+                {
+                    GameData value = dict[keyValuePair.Key];
+                    int maxRound = 0;
+                    foreach (KeyValuePair<string, int> keyValue in value.userInfo)
+                    {
+                        int userRound = keyValue.Value;
+                        if (maxRound < userRound)
+                        {
+                            maxRound = userRound;
+                        }
+                    }
+                    enemyRoundInfo[keyTeamName] = maxRound;
+                }
+            }
+            return enemyRoundInfo;
+        }
+
         public Boolean setSunriseTime(string gameSessionId, string teamName, long newSunriseTime)
         {
             if (gameSessionId == null || teamName == null)
