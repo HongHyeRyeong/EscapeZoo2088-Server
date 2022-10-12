@@ -15,9 +15,13 @@ namespace MatchStatus
 {
     public class Function
     {
+        public Function()
+        {
+            DBEnv.SetUp();
+        }
+
         public async Task<ResMatchStatus> FunctionHandler(ReqMatchStatus req, ILambdaContext context)
         {
-
             var res = new ResMatchStatus
             {
                 ResponseType = ResponseType.Success
@@ -39,28 +43,28 @@ namespace MatchStatus
                 string TeamName = ticketInfo.Players[0].Team;
                 string Gamesessionid = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
 
-                //Random randomObj = new Random();
-                //List<int> roundList = new List<int>();
-                //for (int i = 0; i < 7; i++)
-                //{
-                //    roundList.Add(i);
-                //}
+                Random randomObj = new Random();
+                List<int> roundList = new List<int>();
+                for (int i = 0; i < 4; i++)
+                {
+                    roundList.Add(i);
+                }
 
-                //int random1, temp;
-                //for (int i = 0; i < roundList.Count; ++i)
-                //{
-                //    random1 = randomObj.Next(0, roundList.Count - 1);
+                int random1, temp;
+                for (int i = 0; i < roundList.Count; ++i)
+                {
+                    random1 = randomObj.Next(0, roundList.Count - 1);
 
-                //    temp = roundList[i];
-                //    roundList[i] = roundList[random1];
-                //    roundList[random1] = temp;
-                //}
+                    temp = roundList[i];
+                    roundList[i] = roundList[random1];
+                    roundList[random1] = temp;
+                }
 
-                //List<string> strRoundList = roundList.Select(i => i.ToString()).ToList();
-                //string strRound = string.Join("|", strRoundList); 
+                List<string> strRoundList = roundList.Select(i => i.ToString()).ToList();
+                string strRound = string.Join("|", strRoundList);
 
-                //long sunriseTime = randomObj.Next(10, 25);
-                //string strSunriseTime = sunriseTime.ToString();
+                long sunriseTime = randomObj.Next(10, 25);
+                string strSunriseTime = sunriseTime.ToString();
 
                 foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
                 {
@@ -72,22 +76,20 @@ namespace MatchStatus
                         res.Port = Port + 1;
                     res.TeamName = TeamName;
                     res.Gamesessionid = Gamesessionid;
-                    List<int> tempList = new List<int> { 0, 1, 3, 4, 2 };
-                    res.roundList = tempList;
+                    res.roundList = roundList;
                     break;
                 }
-                //DBEnv.SetUp();
-                //using (var db = new DBConnector())
-                //    {
-                //        var query = new StringBuilder();
-                //        query.Append("update gameInfo set gameSessionId = '")
-                //        .Append(Gamesessionid).Append("',teamName ='").Append(TeamName).Append("',animal ='").Append(req.character)
-                //        .Append("',roundNum = -1").Append(",roundList ='").Append(strRound)
-                //        .Append("',sunriseTime ='").Append(strSunriseTime)
-                //        .Append("' where userid = '").Append(req.userId).Append("';");
-                //        await db.ExecuteNonQueryAsync(query.ToString());
-                //    }
 
+                using (var db = new DBConnector())
+                {
+                    var query = new StringBuilder();
+                    query.Append("update gameInfo set gameSessionId = '")
+                    .Append(Gamesessionid).Append("',teamName ='").Append(TeamName).Append("',animal ='").Append(req.character)
+                    .Append("',roundNum = -1").Append(",roundList ='").Append(strRound)
+                    .Append("',sunriseTime ='").Append(strSunriseTime)
+                    .Append("' where userid = '").Append(req.userId).Append("';");
+                    await db.ExecuteNonQueryAsync(query.ToString());
+                }
             }
             else
             {
