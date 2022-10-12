@@ -10,9 +10,13 @@ namespace myPage
 {
     public class Function
     {
-        public async Task<ResMyPage> FunctionHandler(ReqMyPage req, ILambdaContext context)
+        public Function()
         {
             DBEnv.SetUp();
+        }
+
+        public async Task<ResMyPage> FunctionHandler(ReqMyPage req, ILambdaContext context)
+        {
             var res = new ResMyPage
             {
                 ResponseType = ResponseType.Success
