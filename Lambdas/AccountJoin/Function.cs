@@ -43,6 +43,8 @@ namespace AccountJoin
                 query.Append("INSERT INTO users (userid, password,mbti, win, loss, score) VALUES ('")
                     .Append(req.userId).Append("','").Append(req.password).Append("','").Append(req.mbti).Append("',0, 0, 1000);");
 
+                await db.ExecuteNonQueryAsync(query.ToString());
+
                 query.Clear();
                 query.Append("INSERT INTO gameInfo (gameSessionId, teamName,userid, mbti,roundList) VALUES ('")
                      .Append(req.userId).Append("','").Append(req.userId).Append("','").Append(req.userId).Append("','").Append(req.mbti).Append("','');");
