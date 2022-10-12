@@ -11,9 +11,13 @@ namespace AccountJoin
 {
     public class Function
     {
-        public async Task<ResAccountJoin> FunctionHandler(ReqAccountJoin req, ILambdaContext context)
+        public Function()
         {
             DBEnv.SetUp();
+        }
+
+        public async Task<ResAccountJoin> FunctionHandler(ReqAccountJoin req, ILambdaContext context)
+        {
             var res = new ResAccountJoin
             {
                 ResponseType = ResponseType.Success
