@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using CommonProtocol;
+using GameDB;
 using GameLiftWrapper;
 using GameDB;
 using System.Text;
 using System.Threading;
+using System.Linq;
 
 [assembly: LambdaSerializer(typeof(CustomSerializer.LambdaSerializer))]
 
@@ -56,7 +58,7 @@ namespace EnterIngame
                             checkUserCount = (long)cursor["result"];
                         }
                     }
-                    Thread.Sleep(300);
+                    Thread.Sleep(5000);
                 }
 
                 List<PlayerInfos> playerList = new List<PlayerInfos>();
@@ -80,6 +82,25 @@ namespace EnterIngame
                     }
                 }
 
+                string strRound = "";
+                query.Clear();
+                query.Append("SELECT * FROM gameInfo WHERE gameSessionId = '")
+                    .Append(req.gameSessionId).Append("' AND teamName = '")
+                    .Append(req.teamName).Append("' AND userid = '")
+                    .Append(req.userId).Append("';");
+                using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
+                {
+                    if (cursor.Read())
+                    {
+                        strRound = cursor["roundList"].ToString();
+                    }
+                }
+                await db.ExecuteNonQueryAsync(query.ToString());
+                string[] roundArray = strRound.Split("|");
+                foreach (string num in roundArray)
+                {
+                    res.roundList.Add(int.Parse(num));
+                }
 
                 Console.WriteLine("Success");
                 Console.WriteLine("ResponseType:" + ResponseType.Success);
