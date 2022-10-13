@@ -25,7 +25,8 @@ namespace MatchResult
                 ResponseType = ResponseType.Success
             };
 
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("SELECT * FROM users where userid = '")
@@ -76,6 +77,8 @@ namespace MatchResult
                     .Append("WHERE userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
             }
+
+            db.Dispose();
             return res;
             //결과 업데이트 승리시 +10 패배시 -10
 

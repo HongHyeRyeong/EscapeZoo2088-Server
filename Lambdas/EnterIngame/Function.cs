@@ -33,8 +33,9 @@ namespace EnterIngame
             int totalUserCount = req.teamUserCount*2;
 
             long checkUserCount = 0;
-            using (var db = new DBConnector())
+            
             {
+                var db = new DBConnector();
                 var query = new StringBuilder();
                 query.Append("select count(*) as result from gameInfo where gameSessionId = '")
                 .Append(req.gameSessionId).Append("' and roundNum = -1;");
@@ -58,7 +59,7 @@ namespace EnterIngame
                             checkUserCount = (long)cursor["result"];
                         }
                     }
-                    Thread.Sleep(5000);
+                    //Thread.Sleep(10000);
                 }
 
                 List<PlayerInfos> playerList = new List<PlayerInfos>();
@@ -81,26 +82,27 @@ namespace EnterIngame
                         }
                     }
                 }
+                //string strRound = "";
+                //query.Clear();
+                //query.Append("SELECT * FROM gameInfo WHERE gameSessionId = '")
+                //    .Append(req.gameSessionId).Append("' AND teamName = '")
+                //    .Append(req.teamName).Append("' AND userid = '")
+                //    .Append(req.userId).Append("';");
+                //using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
+                //{
+                //    if (cursor.Read())
+                //    {
+                //        strRound = cursor["roundList"].ToString();
+                //    }
+                //}
+                //await db.ExecuteNonQueryAsync(query.ToString());
+                //string[] roundArray = strRound.Split("|");
+                //foreach (string num in roundArray)
+                //{
+                //    res.roundList.Add(int.Parse(num));
+                //}
 
-                string strRound = "";
-                query.Clear();
-                query.Append("SELECT * FROM gameInfo WHERE gameSessionId = '")
-                    .Append(req.gameSessionId).Append("' AND teamName = '")
-                    .Append(req.teamName).Append("' AND userid = '")
-                    .Append(req.userId).Append("';");
-                using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
-                {
-                    if (cursor.Read())
-                    {
-                        strRound = cursor["roundList"].ToString();
-                    }
-                }
-                await db.ExecuteNonQueryAsync(query.ToString());
-                string[] roundArray = strRound.Split("|");
-                foreach (string num in roundArray)
-                {
-                    res.roundList.Add(int.Parse(num));
-                }
+                db.Dispose();
 
                 Console.WriteLine("Success");
                 Console.WriteLine("ResponseType:" + ResponseType.Success);

@@ -22,7 +22,8 @@ namespace myPage
                 ResponseType = ResponseType.Success
             };
 
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("SELECT * FROM users WHERE userid ='")
@@ -37,11 +38,15 @@ namespace myPage
                         res.win = (int)cursor["win"];
                         res.loss = (int)cursor["loss"];
                         res.score = (int)cursor["score"];
+
+                        db.Dispose();
                         return res;
                     }
 
                 }
             }
+
+            db.Dispose();
             res.ResponseType = ResponseType.Fail;
             return res;
         }

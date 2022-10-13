@@ -23,7 +23,8 @@ namespace Login
                 ResponseType = ResponseType.Success
             };
 
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("SELECT userid,score FROM users WHERE userid ='")
@@ -35,11 +36,14 @@ namespace Login
                     {
                         res.userId = cursor["userId"].ToString();
                         res.score = (int) cursor["score"];
+
+                        db.Dispose();
                         return res;
                     }
 
                 }
             }
+            db.Dispose();
             res.ResponseType = ResponseType.Fail;
             return res;
         }

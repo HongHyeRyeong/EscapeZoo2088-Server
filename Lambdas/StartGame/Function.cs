@@ -30,7 +30,8 @@ namespace StartGame
             int currentRoundNum = req.preRoundNum + 1;
             //gameInfo.addUser(req.gameSessionId, req.teamName, req.userId, req.mbti, req.animal, currentRoundNum);
             bool isSuccessRoundNum = false;
-            using (var db = new DBConnector())
+            //using (var db = new DBConnector())
+            var db = new DBConnector();
             {
                 var query = new StringBuilder();
                 query.Append("UPDATE gameInfo SET roundNum = ")
@@ -43,6 +44,7 @@ namespace StartGame
                 if (!isSuccessRoundNum)
                 {
                     Console.WriteLine("Fail update RoundNum");
+                    db.Dispose();
                     return res;
                 }
 
@@ -73,12 +75,14 @@ namespace StartGame
 
                         using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                         {
-                            if (cursor.Read())
+                            for (int i = 0; i < totalUserCount; i++)
                             {
-                                checkUserCount++;
+                                if (cursor.Read())
+                                {
+                                    checkUserCount++;
+                                }
                             }
                         }
-                        await db.ExecuteNonQueryAsync(query.ToString());
                     }
                     else
                     {
@@ -90,12 +94,14 @@ namespace StartGame
                            .Append(currentRoundNum).Append(";");
                         using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                         {
-                            if (cursor.Read())
+                            for (int i = 0; i < req.teamUserCount; i++)
                             {
-                                checkUserCount++;
+                                if (cursor.Read())
+                                {
+                                    checkUserCount++;
+                                }
                             }
                         }
-                        await db.ExecuteNonQueryAsync(query.ToString());
                     }
 
                     if (checkUserCount == 0)
@@ -107,6 +113,7 @@ namespace StartGame
                 if (checkUserCount == 0)
                 {
                     Console.WriteLine("checkUserCount is Zero");
+                    db.Dispose();
                     return res;
                 }
 
@@ -134,15 +141,14 @@ namespace StartGame
                     if (cursor.Read())
                     {
                         roundListInfo = cursor["roundList"].ToString();
-                        res.sunriseTime = Convert.ToInt64(cursor["sunriseTime"].ToString());
+                        res.sunriseTime = int.Parse(cursor["sunriseTime"].ToString());
                     }
                 }
-                await db.ExecuteNonQueryAsync(query.ToString());
             
                 string[] roundStr = roundListInfo.Split('|');
                 foreach (var round in roundStr)
                 {
-                    res.roundList.Add(Convert.ToInt32(round));
+                    res.roundList.Add(int.Parse(round));
                 }
                 //foreach (int num in roundList)
                 //{
@@ -164,20 +170,23 @@ namespace StartGame
                 
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                 {
-                    if (cursor.Read())
+                    for (int i = 0; i < req.teamUserCount; i++)
                     {
-                        int result = Convert.ToInt32(cursor["roundNum"].ToString());
-                        if (enemyRoundMax < result)
+                        if (cursor.Read())
                         {
-                            enemyRoundMax = result;
+                            int result = int.Parse(cursor["roundNum"].ToString());
+                            if (enemyRoundMax < result)
+                            {
+                                enemyRoundMax = result;
+                            }
                         }
                     }
                 }
-                await db.ExecuteNonQueryAsync(query.ToString());
                 res.enemyRoundNum = enemyRoundMax;
 
                 //res.sunriseTime = gameInfo.getSunriseTime(req.gameSessionId, req.teamName);
 
+                db.Dispose();
                 Console.WriteLine("Success");
                 Console.WriteLine("ResponseType:" + ResponseType.Success);
                 Console.WriteLine("gameSessionId:" + req.gameSessionId);

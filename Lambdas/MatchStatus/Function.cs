@@ -35,7 +35,7 @@ namespace MatchStatus
             });
 
             var ticketInfo = match_response.TicketList[0];
-            using (var db = new DBConnector())
+            //using (var db = new DBConnector())
             {
                 if (ticketInfo.Status == "COMPLETED")
                 {
@@ -81,7 +81,7 @@ namespace MatchStatus
                         break;
                     }
 
-                
+                    var db = new DBConnector();
                     var query = new StringBuilder();
                     query.Append("update gameInfo set gameSessionId = '")
                     .Append(Gamesessionid).Append("',teamName ='").Append(TeamName).Append("',animal =").Append(req.animal)
@@ -89,6 +89,8 @@ namespace MatchStatus
                     .Append("',sunriseTime =").Append(sunriseTime)
                     .Append(" where userid = '").Append(req.userId).Append("';");
                     await db.ExecuteNonQueryAsync(query.ToString());
+
+                    db.Dispose();
                 }
                 else
                 {

@@ -23,8 +23,9 @@ namespace AccountJoin
                 ResponseType = ResponseType.Success
             };
 
-            using (var db = new DBConnector())
+            //using (var db = new DBConnector())
             {
+                var db = new DBConnector();
                 var query = new StringBuilder();
                 query.Append("SELECT userid FROM users where userid = '")
                     .Append(req.userId).Append("';");
@@ -35,6 +36,8 @@ namespace AccountJoin
                     {
                         res.ResponseType = ResponseType.DuplicateName;
                         res.userId = cursor["userId"].ToString();
+
+                        db.Dispose();
                         return res;
                     }
                 }
@@ -52,6 +55,8 @@ namespace AccountJoin
                 await db.ExecuteNonQueryAsync(query.ToString());
 
                 res.userId = db.LastInsertedId().ToString();
+
+                db.Dispose();
             }
             return res;
         }

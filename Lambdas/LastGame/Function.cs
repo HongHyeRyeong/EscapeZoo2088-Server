@@ -31,7 +31,8 @@ namespace LastGame
             int clearRoundNum = req.currentRoundNum + 1;
             //gameInfo.addUser(req.gameSessionId, req.teamName, req.userId, req.mbti, req.animal, clearRoundNum);
             bool isSuccessRoundNum = false;
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("UPDATE gameInfo SET roundNum = ")
@@ -43,6 +44,8 @@ namespace LastGame
                 if (!isSuccessRoundNum)
                 {
                     Console.WriteLine("Fail update RoundNum");
+
+                    db.Dispose();
                     return res;
                 }
 
@@ -66,12 +69,14 @@ namespace LastGame
                        .Append(clearRoundNum).Append(";");
                     using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                     {
-                        if (cursor.Read())
+                        for (int i = 0; i < req.teamUserCount; i++)
                         {
-                            checkUserCount++;
+                            if (cursor.Read())
+                            {
+                                checkUserCount++;
+                            }
                         }
                     }
-                    await db.ExecuteNonQueryAsync(query.ToString());
 
                     //checkUserCount = gameInfo.getUserCountInRound(req.gameSessionId, req.teamName, clearRoundNum);
                     query.Clear();
@@ -81,12 +86,14 @@ namespace LastGame
                        .Append(clearRoundNum).Append(";");
                     using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                     {
-                        if (cursor.Read())
+                        for (int i = 0; i < req.teamUserCount; i++)
                         {
-                            checkUserCount++;
+                            if (cursor.Read())
+                            {
+                                checkUserCount++;
+                            }
                         }
                     }
-                    await db.ExecuteNonQueryAsync(query.ToString());
                     if (checkUserCount == 0)
                     {
                         break;
@@ -95,6 +102,8 @@ namespace LastGame
                 if (checkUserCount == 0)
                 {
                     Console.WriteLine("checkUserCount is Zero");
+
+                    db.Dispose();
                     return res;
                 }
 
@@ -111,16 +120,18 @@ namespace LastGame
                     .Append(req.teamName).Append("';");
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                 {
-                    if (cursor.Read())
+                    for (int i = 0; i < req.teamUserCount; i++)
                     {
-                        int result = Convert.ToInt32(cursor["roundNum"].ToString());
-                        if (enemyRoundMax < result)
+                        if (cursor.Read())
                         {
-                            enemyRoundMax = result;
+                            int result = int.Parse(cursor["roundNum"].ToString());
+                            if (enemyRoundMax < result)
+                            {
+                                enemyRoundMax = result;
+                            }
                         }
                     }
                 }
-                await db.ExecuteNonQueryAsync(query.ToString());
 
                 bool isWinner = true;
                 query.Clear();
@@ -130,12 +141,14 @@ namespace LastGame
                     .Append(1).Append(";");
                 using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                 {
-                    if (cursor.Read())
+                    for (int i = 0; i < req.teamUserCount; i++)
                     {
-                        isWinner = false;
+                        if (cursor.Read())
+                        {
+                            isWinner = false;
+                        }
                     }
                 }
-                await db.ExecuteNonQueryAsync(query.ToString());
                 if (isWinner)
                 {
                     query.Clear();
@@ -144,6 +157,8 @@ namespace LastGame
                         .Append(req.userId).Append("';");
                     await db.ExecuteNonQueryAsync(query.ToString());
                 }
+
+                db.Dispose();
 
                 res.ResponseType = ResponseType.Success;
                 res.gameSessionId = req.gameSessionId;

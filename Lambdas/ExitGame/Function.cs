@@ -28,18 +28,26 @@ namespace ExitGame
             //GameInfo gameInfo = GameInfo.Instance();
             //int remainUserCount = gameInfo.removeUser(req.gameSessionId, req.teamName, req.userId);
             bool isExistUser = false;
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("SELECT * gameInfo WHERE gameSessionId = '")
                     .Append(req.gameSessionId).Append("' AND teamName = '")
                     .Append(req.teamName).Append("' AND userid = '")
                     .Append(req.userId).Append("';");
-                await db.ExecuteNonQueryAsync(query.ToString());
-                isExistUser = true;
+                using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
+                {
+                    if (cursor.Read())
+                    {
+                        isExistUser = true;
+                    }
+                }
                 if (!isExistUser)
                 {
                     Console.WriteLine("NOT EXIST User");
+
+                    db.Dispose();
                     return res;
                 }
 
@@ -50,7 +58,9 @@ namespace ExitGame
                     .Append("WHERE userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
             }
-            
+
+            db.Dispose();
+
             Console.WriteLine("Success");
 
             res.ResponseType = ResponseType.Success;
