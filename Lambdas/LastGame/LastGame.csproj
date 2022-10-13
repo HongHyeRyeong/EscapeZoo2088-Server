@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CommonProtocol\CommonProtocol.csproj" />
+	<ProjectReference Include="..\..\DBConnector\DBConnector.csproj" />
     <ProjectReference Include="..\..\GameLiftWrapper\GameLiftBackend\GameLiftBackend.csproj" />
     <ProjectReference Include="..\..\LambdaSerializer\LambdaSerializer.csproj" />
   </ItemGroup>
