@@ -5,6 +5,7 @@ using CommonProtocol;
 using Amazon.GameLift;
 using Amazon.GameLift.Model;
 using System.Collections.Generic;
+using GameDB;
 
 [assembly: LambdaSerializer(typeof(CustomSerializer.LambdaSerializer))]
 
@@ -12,6 +13,11 @@ namespace MatchRequest
 {
     public class Function
     {
+        public Function()
+        {
+            DBEnv.SetUp();
+        }
+
         public async Task<ResMatchRequest> FunctionHandler(ReqMatchRequest req, ILambdaContext context)
         {
             var res = new ResMatchRequest
