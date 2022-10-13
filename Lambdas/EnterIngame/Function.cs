@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using CommonProtocol;
 using GameLiftWrapper;
+using GameDB;
+using System.Text;
+using System.Threading;
 
 [assembly: LambdaSerializer(typeof(CustomSerializer.LambdaSerializer))]
 
@@ -11,6 +14,10 @@ namespace EnterIngame
 {
     public class Function
     {
+        public Function()
+        {
+            DBEnv.SetUp();
+        }
         private readonly int ROUND_MATCHMAKING_END = -1;
 
         public async Task<ResEnterIngame> FunctionHandler(ReqEnterIngame req, ILambdaContext context)
@@ -20,68 +27,70 @@ namespace EnterIngame
                 ResponseType = ResponseType.Fail
             };
 
-            GameInfo gameInfo = GameInfo.Instance();
-
             DateTime currentDateTime = DateTime.UtcNow;
-            int totalUserCount = req.teamUserCount;
+            int totalUserCount = req.teamUserCount*2;
 
-            int checkUserCount = 0;
-            while (checkUserCount < totalUserCount)
+            long checkUserCount = 0;
+            using (var db = new DBConnector())
             {
-                DateTime checkDateTime = DateTime.UtcNow;
-                TimeSpan dateDiff = checkDateTime - currentDateTime;
-                int diffSecond = dateDiff.Seconds;
-                if (diffSecond < 1)
+                var query = new StringBuilder();
+                query.Append("select count(*) as result from gameInfo where gameSessionId = '")
+                .Append(req.gameSessionId).Append("' and roundNum = -1;");
+
+                while (checkUserCount < totalUserCount)
                 {
-                    continue;
+                    DateTime checkDateTime = DateTime.UtcNow;
+                    TimeSpan dateDiff = checkDateTime - currentDateTime;
+                    int diffSecond = dateDiff.Seconds;
+                    if (diffSecond < 1)
+                    {
+                        continue;
+                    }
+                    currentDateTime = checkDateTime;
+
+
+                    using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
+                    {
+                        if (cursor.Read())
+                        {
+                            checkUserCount = (long)cursor["result"];
+                        }
+                    }
+                    Thread.Sleep(300);
                 }
-                currentDateTime = checkDateTime;
 
-                checkUserCount = gameInfo.getUserCountInRound(req.gameSessionId, req.teamName, ROUND_MATCHMAKING_END);
+                List<PlayerInfos> playerList = new List<PlayerInfos>();
 
-                if (checkUserCount == 0)
+                query.Clear();
+                query.Append("SELECT mbti,animal,userid FROM gameInfo where gameSessionId = '")
+                    .Append(req.gameSessionId).Append("' and teamName = '").Append(req.teamName).Append("';");
+
+                using (var cursor = await db.ExecuteReaderAsync(query.ToString()))
                 {
-                    break;
+                    for(int i=0; i<req.teamUserCount; i++)
+                    {
+                        if (cursor.Read())
+                        {
+                            string mbti = cursor["mbti"].ToString();
+                            int animal = (int)cursor["animal"];
+                            string userId = cursor["userid"].ToString();
+                            PlayerInfos playerInfo = new PlayerInfos(userId, mbti, animal);
+                            playerList.Add(playerInfo);
+                        }
+                    }
                 }
+
+
+                Console.WriteLine("Success");
+                Console.WriteLine("ResponseType:" + ResponseType.Success);
+                Console.WriteLine("gameSessionId:" + req.gameSessionId);
+                Console.WriteLine("teamName:" + req.teamName);
+
+                res.ResponseType = ResponseType.Success;
+                res.gameSessionId = req.gameSessionId;
+                res.teamName = req.teamName;
+                res.playerInfos = playerList;
             }
-            if (checkUserCount == 0)
-            {
-                Console.WriteLine("checkUserCount is Zero");
-                return res;
-            }
-
-            Dictionary<string, UserData> userListInTeam = gameInfo.getUserListInTeam(req.gameSessionId, req.teamName);
-            List<PlayerInfos> playerList = new List<PlayerInfos>();
-            foreach (KeyValuePair<string, UserData> keyValuePair in userListInTeam)
-            {
-                string key = keyValuePair.Key;
-                UserData value = keyValuePair.Value;
-                if (value.roundNum == ROUND_MATCHMAKING_END)
-                {
-                    string mbti = value.mbti;
-                    int animal = value.animal;
-                    PlayerInfos playerInfo = new PlayerInfos(key, mbti, animal);
-                    playerList.Add(playerInfo);
-                }
-            }
-
-            Console.WriteLine("Success");
-
-            res.ResponseType = ResponseType.Success;
-            res.gameSessionId = req.gameSessionId;
-            res.teamName = req.teamName;
-
-            string strPlayerInfo = "";
-            foreach (PlayerInfos info in playerList)
-            {
-                res.playerInfos.Add(info);
-                strPlayerInfo += "(" + info.userId + ", " + info.mbti + ", " + info.animal + ") ";
-            }
-
-            Console.WriteLine("ResponseType:" + ResponseType.Success);
-            Console.WriteLine("gameSessionId:" + req.gameSessionId);
-            Console.WriteLine("teamName:" + req.teamName);
-            Console.WriteLine("playerInfos: " + strPlayerInfo);
 
             return res;
         }

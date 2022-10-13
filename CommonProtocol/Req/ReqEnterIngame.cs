@@ -5,5 +5,6 @@
         public string gameSessionId;
         public string teamName;
         public int teamUserCount;
+        public string userId;
     }
 }
