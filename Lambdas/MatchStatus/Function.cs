@@ -35,66 +35,67 @@ namespace MatchStatus
             });
 
             var ticketInfo = match_response.TicketList[0];
-
-            if (ticketInfo.Status == "COMPLETED")
+            using (var db = new DBConnector())
             {
-                string ipaddr = ticketInfo.GameSessionConnectionInfo.IpAddress;
-                int Port = ticketInfo.GameSessionConnectionInfo.Port;
-                string TeamName = ticketInfo.Players[0].Team;
-                string Gamesessionid = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
-
-                Random randomObj = new Random();
-                List<int> roundList = new List<int>();
-                for (int i = 0; i < 4; i++)
+                if (ticketInfo.Status == "COMPLETED")
                 {
-                    roundList.Add(i);
-                }
+                    string ipaddr = ticketInfo.GameSessionConnectionInfo.IpAddress;
+                    int Port = ticketInfo.GameSessionConnectionInfo.Port;
+                    string TeamName = ticketInfo.Players[0].Team;
+                    string Gamesessionid = ticketInfo.GameSessionConnectionInfo.GameSessionArn;
 
-                int random1, temp;
-                for (int i = 0; i < roundList.Count; ++i)
-                {
-                    random1 = randomObj.Next(0, roundList.Count - 1);
+                    Random randomObj = new Random();
+                    List<int> roundList = new List<int>() { 0, 1, 2, 3};
+                    //for (int i = 0; i < 4; i++)
+                    //{
+                    //    roundList.Add(i);
+                    //}
 
-                    temp = roundList[i];
-                    roundList[i] = roundList[random1];
-                    roundList[random1] = temp;
-                }
+                    //int random1, temp;
+                    //for (int i = 0; i < roundList.Count; ++i)
+                    //{
+                    //    random1 = randomObj.Next(0, roundList.Count - 1);
 
-                List<string> strRoundList = roundList.Select(i => i.ToString()).ToList();
-                string strRound = string.Join("|", strRoundList);
+                    //    temp = roundList[i];
+                    //    roundList[i] = roundList[random1];
+                    //    roundList[random1] = temp;
+                    //}
 
-                long sunriseTime = randomObj.Next(10, 25);
-                string strSunriseTime = sunriseTime.ToString();
+                    List<string> strRoundList = roundList.Select(i => i.ToString()).ToList();
+                    string strRound = string.Join("|", strRoundList);
 
-                foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
-                {
-                    res.IpAddress = ipaddr;
-                    res.PlayerSessionId = psess.PlayerSessionId;
-                    if (TeamName == "blue")
-                        res.Port = Port;
-                    else
-                        res.Port = Port + 1;
-                    res.TeamName = TeamName;
-                    res.Gamesessionid = Gamesessionid;
-                    res.roundList = roundList;
-                    break;
-                }
+                    long sunriseTime = 3; // randomObj.Next(10, 25);
+                    string strSunriseTime = sunriseTime.ToString();
 
-                using (var db = new DBConnector())
-                {
+                    foreach (MatchedPlayerSession psess in ticketInfo.GameSessionConnectionInfo.MatchedPlayerSessions)
+                    {
+                        res.IpAddress = ipaddr;
+                        res.PlayerSessionId = psess.PlayerSessionId;
+                        if (TeamName == "blue")
+                            res.Port = Port;
+                        else
+                            res.Port = Port + 1;
+                        res.TeamName = TeamName;
+                        res.Gamesessionid = Gamesessionid;
+                        res.roundList = roundList;
+                        break;
+                    }
+
+                
                     var query = new StringBuilder();
                     query.Append("update gameInfo set gameSessionId = '")
-                    .Append(Gamesessionid).Append("',teamName ='").Append(TeamName).Append("',animal ='").Append(req.character)
-                    .Append("',roundNum = -1").Append(",roundList ='").Append(strRound)
-                    .Append("',sunriseTime ='").Append(strSunriseTime)
-                    .Append("' where userid = '").Append(req.userId).Append("';");
+                    .Append(Gamesessionid).Append("',teamName ='").Append(TeamName).Append("',animal =").Append(req.animal)
+                    .Append(",roundNum = -1").Append(",roundList ='").Append(strRound)
+                    .Append("',sunriseTime =").Append(sunriseTime)
+                    .Append(" where userid = '").Append(req.userId).Append("';");
                     await db.ExecuteNonQueryAsync(query.ToString());
                 }
+                else
+                {
+                    res.ResponseType = ResponseType.Proceeding;
+                }
             }
-            else
-            {
-                res.ResponseType = ResponseType.Proceeding;
-            }
+            
 
             return res;
 
