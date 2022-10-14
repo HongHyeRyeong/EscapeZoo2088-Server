@@ -60,8 +60,8 @@ namespace StartGame
                 {
                     DateTime checkDateTime = DateTime.UtcNow;
                     TimeSpan dateDiff = checkDateTime - currentDateTime;
-                    int diffSecond = dateDiff.Seconds;
-                    if (diffSecond < 1)
+                    int diffSecond = dateDiff.Milliseconds;
+                    if (diffSecond < 100)
                     {
                         continue;
                     }

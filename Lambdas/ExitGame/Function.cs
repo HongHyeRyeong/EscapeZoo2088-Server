@@ -53,8 +53,8 @@ namespace ExitGame
 
                 query.Clear();
                 query.Append("UPDATE gameInfo SET gameSessionId = '")
-                    .Append(req.userId).Append("', teamName = '")
-                    .Append(req.userId).Append("', status = 'matching' ")
+                    .Append(req.gameSessionId).Append("', teamName = '")
+                    .Append(req.teamName).Append("', status = 'matching' ")
                     .Append("WHERE userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
             }

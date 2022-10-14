@@ -59,15 +59,15 @@ namespace MatchResult
 
                 res.score = score;
                 query.Clear();
-                query.Append("update users set win = '")
-                .Append(win).Append("',loss ='").Append(loss).Append("',score ='").Append(score)
-                .Append("' where userid = '").Append(req.userId).Append("';");
+                query.Append("update users set win = ")
+                .Append(win).Append(", loss = ").Append(loss).Append(", score = ").Append(score)
+                .Append(" where userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
 
                 query.Clear();
-                query.Append("update users set win = '")
-                .Append(win).Append("',loss ='").Append(loss).Append("',score ='").Append(score)
-                .Append("' where userid = '").Append(req.userId).Append("';");
+                query.Append("update users set win = ")
+                .Append(win).Append(", loss = ").Append(loss).Append(", score = ").Append(score)
+                .Append(" where userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
 
                 query.Clear();
