@@ -32,7 +32,7 @@ namespace ExitGame
             //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
-                query.Append("SELECT * gameInfo WHERE gameSessionId = '")
+                query.Append("SELECT * FROM gameInfo WHERE gameSessionId = '")
                     .Append(req.gameSessionId).Append("' AND teamName = '")
                     .Append(req.teamName).Append("' AND userid = '")
                     .Append(req.userId).Append("';");
