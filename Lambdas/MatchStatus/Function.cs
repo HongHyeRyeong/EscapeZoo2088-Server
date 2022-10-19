@@ -71,10 +71,7 @@ namespace MatchStatus
                     {
                         res.IpAddress = ipaddr;
                         res.PlayerSessionId = psess.PlayerSessionId;
-                        if (TeamName == "blue")
-                            res.Port = 12000;
-                        else
-                            res.Port = 50000;
+                        res.Port = Port;
                         res.TeamName = TeamName;
                         res.Gamesessionid = Gamesessionid;
                         res.roundList = roundList;
