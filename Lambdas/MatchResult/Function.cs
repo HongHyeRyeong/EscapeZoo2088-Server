@@ -13,15 +13,20 @@ namespace MatchResult
 {
     public class Function
     {
-        public async Task<ResMatchResult> FunctionHandler(ReqMatchResult req, ILambdaContext context)
+        public Function()
         {
             DBEnv.SetUp();
+        }
+
+        public async Task<ResMatchResult> FunctionHandler(ReqMatchResult req, ILambdaContext context)
+        {
             var res = new ResMatchResult
             {
                 ResponseType = ResponseType.Success
             };
 
-            using (var db = new DBConnector())
+            var db = new DBConnector();
+            //using (var db = new DBConnector())
             {
                 var query = new StringBuilder();
                 query.Append("SELECT * FROM users where userid = '")
@@ -54,11 +59,26 @@ namespace MatchResult
 
                 res.score = score;
                 query.Clear();
-                query.Append("update users set win = '")
-                .Append(win).Append("',loss ='").Append(loss).Append("',score ='").Append(score)
-                .Append("' where userid = '").Append(req.userId).Append("';");
+                query.Append("update users set win = ")
+                .Append(win).Append(", loss = ").Append(loss).Append(", score = ").Append(score)
+                .Append(" where userid = '").Append(req.userId).Append("';");
+                await db.ExecuteNonQueryAsync(query.ToString());
+
+                query.Clear();
+                query.Append("update users set win = ")
+                .Append(win).Append(", loss = ").Append(loss).Append(", score = ").Append(score)
+                .Append(" where userid = '").Append(req.userId).Append("';");
+                await db.ExecuteNonQueryAsync(query.ToString());
+
+                query.Clear();
+                query.Append("UPDATE gameInfo SET gameSessionId = '")
+                    .Append(req.userId).Append("', teamName = '")
+                    .Append(req.userId).Append("', status = 'matching' ")
+                    .Append("WHERE userid = '").Append(req.userId).Append("';");
                 await db.ExecuteNonQueryAsync(query.ToString());
             }
+
+            db.Dispose();
             return res;
             //결과 업데이트 승리시 +10 패배시 -10
 

@@ -8,5 +8,6 @@ namespace CommonProtocol
         public string gameSessionId;
         public string teamName;
         public List<PlayerInfos> playerInfos;
+        public List<int> roundList;
     }
 }

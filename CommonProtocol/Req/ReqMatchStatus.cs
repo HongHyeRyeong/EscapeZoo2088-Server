@@ -7,7 +7,7 @@ namespace CommonProtocol
     {
         public string userId;
         public int gameMap;
-        public int character;
+        public int animal;
         public string mbti;
         public List<string> ticketIds = new List<string>();
     }

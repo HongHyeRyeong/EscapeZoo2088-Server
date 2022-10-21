@@ -18,7 +18,7 @@
     "package-type"         : "Zip",
     "function-role"        : "arn:aws:iam::746460013620:role/mzc-game-lambda-role",
     "tracing-mode"         : "PassThrough",
-    "environment-variables" : "\"GAME_DB_PORT\"=\"3306\";\"GAME_DB_USER\"=\"admin\";\"GAME_DB_CHARSET\"=\"utf8\";\"GAME_DB_IP\"=\"mzc-game-rds.cmym7pzc3h6r.ap-northeast-2.rds.amazonaws.com\";\"GAME_DB_DATABASE\"=\"escapezoo\";\"GAME_DB_PASSWORD\"=\"Admin1!!\"",
+    "environment-variables" : "\"GAMELIFT_FLEET_ID\"=\"fleet-fe3c9d0f-4a13-4a33-8552-03909fd97906\";\"GAME_DB_PORT\"=\"3306\";\"GAME_DB_USER\"=\"admin\";\"GAME_DB_CHARSET\"=\"utf8\";\"GAME_DB_IP\"=\"mzc-game-rds.cmym7pzc3h6r.ap-northeast-2.rds.amazonaws.com\";\"GAME_DB_DATABASE\"=\"escapezoo\";\"GAME_DB_PASSWORD\"=\"Admin1!!\"",
     "image-tag"             : "",
     "function-description"  : "",
     "function-subnets"      : "subnet-084abdee1955ad557,subnet-0d405eb15babe41d4",
